@@ -11,3 +11,17 @@ Estamos construíndo os esquemas conceituais das nossas base de dados, que podem
 - [Banco de dados de Grafos (Neo4J)](https://lucid.app/lucidchart/422e7106-4ef4-41e3-83c2-07dbb354022c/edit?invitationId=inv_dfef46f2-1964-4f8f-831b-11a692c9020d) 
 - [Esclarecimento do funcionamento dos BDs](https://docs.google.com/document/d/1ogJMdn4OgbnGiW7WrHYYl2R29OkIyDyG7kjJ5a6FRAU/edit?usp=sharing)
 - [Apresentação](https://docs.google.com/presentation/d/1jRMrtB4VZ2IffKIPk2C2ZEkr3Ck8qOOpAB04Yc3mH2A/edit?usp=sharing)
+
+Conecte-se aos bancos de dados que criamos a partir das URLs:
+- PostgreSQL (Microsoft Azure):  
+```jdbc:postgresql://sas-mac439.postgres.database.azure.com:5432/postgres?user=mac439&password=Atila_Iamarino&sslmode=require```
+- MongoDB (Atlas):  
+```mongodb+srv://mac439:Atila_Iamarino@mac439.fsau9s1.mongodb.net/?retryWrites=true&w=majority```
+- Neo4J (Aura):  
+```neo4j+s://eefc82d2.databases.neo4j.io```
+    - user: mac439
+    - pwd: T5T-yA4v9pPblZ_ezRwgqmwoh_sbuMFYpHHy66Wr7Tk
+- Redis (RedisLabs):  
+```redis-10242.c83.us-east-1-2.ec2.cloud.redislabs.com:10242```
+    - user: default
+    - pwd: GVNLKjX374wY9OL9iJ2qZlEMw3xTsSJA
