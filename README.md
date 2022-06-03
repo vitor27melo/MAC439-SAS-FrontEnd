@@ -18,9 +18,9 @@ Conecte-se aos bancos de dados que criamos a partir das URLs:
 - MongoDB (Atlas):  
 ```mongodb+srv://mac439:Atila_Iamarino@mac439.fsau9s1.mongodb.net/?retryWrites=true&w=majority```
 - Neo4J (Aura):  
-```neo4j+s://eefc82d2.databases.neo4j.io```
-    - user: mac439
-    - pwd: T5T-yA4v9pPblZ_ezRwgqmwoh_sbuMFYpHHy66Wr7Tk
+```neo4j+s://3184388f.databases.neo4j.io```
+    - user: neo4j
+    - pwd: ArbFLmo6VLVl1qHLUMzQalzXmOwBlsFqpyafiX7a218
 - Redis (RedisLabs):  
 ```redis-10242.c83.us-east-1-2.ec2.cloud.redislabs.com:10242```
     - user: default
