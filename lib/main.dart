@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'aboutGrade.dart' as aboutGrade;
+import 'examRegister.dart' as examRegister;
 import 'dart:convert';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,9 +35,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool formVisible = false;
-  int _formsIndex = 1;
   var user = {};
   var usuarioLogado = false;
+  ValueNotifier<bool> isDialOpen = ValueNotifier(true);
 
   final nameController = TextEditingController();
   final usernameController = TextEditingController();
@@ -53,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _login() async {
-    var url = Uri.parse('https://sas-mac439.herokuapp.com/login');
+    var url = Uri.parse('http://localhost:1323/login');
     var response = await http.post(
         url,
         headers: {
@@ -87,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _register() async {
-    var url = Uri.parse('https://sas-mac439.herokuapp.com/register');
+    var url = Uri.parse('http://localhost:1323/register');
     var response = await http.post(
         url,
         headers: {
@@ -129,6 +131,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _onGoToExamRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const examRegister.ExamPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,20 +158,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       .headline6
               ),
               const SizedBox(height: 25),
-              Image.asset('coronavirus.png', width: 100),
+              Image.network('https://cdn.pixabay.com/photo/2020/04/29/07/54/coronavirus-5107715_1280.png', width: 100),
               const SizedBox(height: 25),
+
               Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      height: 20,
+                      height: 45,
                       alignment: Alignment.center,
                       child: Row(
                         children: [
                           const Text('Sua'),
-                          TextButton(onPressed: _onGoToAboutGradePage,
-                              child: Text('nota de segurança')),
+                          TextButton(
+                              onPressed: _onGoToAboutGradePage,
+                              child: Text('nota de segurança')
+                          ),
                           const Text('hoje é:')
                         ],
                       ),
@@ -180,7 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        height: 20,
+                        height: 40,
                         alignment: Alignment.center,
                         child: Row(
                           children: [
@@ -208,11 +220,29 @@ class _MyHomePageState extends State<MyHomePage> {
               ]
           )
       ),
-      floatingActionButton: usuarioLogado ? FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: usuarioLogado ? SpeedDial(
+        animatedIcon: AnimatedIcons.add_event,
+        openCloseDial: isDialOpen,
+        backgroundColor: Colors.redAccent,
+        overlayColor: Colors.grey,
+        overlayOpacity: 0.5,
+        spacing: 15,
+        spaceBetweenChildren: 15,
+        closeManually: false,
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.image),
+              label: 'Atestado/Exame',
+              backgroundColor: Colors.blue,
+              onTap: (){
+                setState(() {
+                  isDialOpen = ValueNotifier(false);
+                  _onGoToExamRegister();
+                });
+              }
+          )
+        ],
+      ) : null
     );
   }
 
