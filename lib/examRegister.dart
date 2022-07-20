@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
-import 'dart:io' as io;
+import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
+import 'globals.dart' as globals;
+import 'package:http_parser/http_parser.dart';
+import 'dart:html' as html;
+import 'dart:typed_data';
+import 'dart:async';
+import 'dart:convert';
+import 'package:http_parser/http_parser.dart';
 
 class ExamPage extends StatefulWidget {
   const ExamPage({Key? key}) : super(key: key);
@@ -12,11 +19,15 @@ class ExamPage extends StatefulWidget {
 
 
 class _ExamRegisterPageState extends State<ExamPage> {
-  String dropdownValue = 'Exame';
+  List<int>? _selectedFile;
+  Uint8List? _bytesData;
+
+  String naturezaArquivo = 'Exame';
+  String nomeArquivo = '';
+  DateTime selectedDate = DateTime.now();
 
   final obsController = TextEditingController();
 
-  DateTime selectedDate = DateTime.now();
 
   @override
   void dispose() {
@@ -24,21 +35,61 @@ class _ExamRegisterPageState extends State<ExamPage> {
     super.dispose();
   }
 
-  Future<void> _selectFile(BuildContext context) async {
-    if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android) {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
-      if (result != null) {
-        print('-=-----=');
-        print(result.files);
-      }
+  Future<void> _register(BuildContext context) async {
+    var url = Uri.parse('http://localhost:1323/user/upload-file');
+    var request = http.MultipartRequest("POST", url);
 
-    }
-    else if (defaultTargetPlatform == TargetPlatform.linux || defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.windows) {
-      // Some desktop specific code there
-    }
-    else {
-      // Some web specific code there
-    }
+    request.headers['Access-Control_Allow_Origin'] = '*';
+    request.headers['Authorization'] = "Bearer ${globals.token}";
+
+    request.fields['attachmentType'] = naturezaArquivo;
+    request.fields['date'] = selectedDate.toString();
+    request.fields['obs'] = obsController.text;
+    request.files.add(await http.MultipartFile.fromBytes('file', _selectedFile!,
+        contentType: new MediaType('application', 'octet-stream'),
+        filename: nomeArquivo)
+    );
+
+    request.send().then((response) {
+      if (response.statusCode == 200) {
+        Navigator.of(context, rootNavigator: true).pop();
+        final snackBar = SnackBar(
+          content: Text('Documento cadastrado com sucesso!'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        final snackBar = SnackBar(
+          content: Text('Houve um erro ao cadastrar o documento. Tente novamente!'),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    });
+  }
+
+  startWebFilePicker() async {
+    html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
+    uploadInput.multiple = true;
+    uploadInput.draggable = true;
+    uploadInput.click();
+
+    uploadInput.onChange.listen((e) {
+      nomeArquivo = uploadInput.files![0].name;
+      final files = uploadInput.files;
+      final file = files![0];
+      final reader = new html.FileReader();
+
+      reader.onLoadEnd.listen((e) {
+        _handleResult(reader.result!);
+      });
+      reader.readAsDataUrl(file);
+    });
+  }
+
+  void _handleResult(Object result) {
+    setState(() {
+      _bytesData = Base64Decoder().convert(result.toString().split(",").last);
+      _selectedFile = _bytesData;
+    });
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -80,7 +131,7 @@ class _ExamRegisterPageState extends State<ExamPage> {
                     ),
                   ),
                   DropdownButton<String>(
-                    value: dropdownValue,
+                    value: naturezaArquivo,
                     icon: const Icon(Icons.arrow_downward),
                     elevation: 16,
                     underline: Container(
@@ -88,7 +139,7 @@ class _ExamRegisterPageState extends State<ExamPage> {
                     ),
                     onChanged: (String? newValue) {
                       setState(() {
-                        dropdownValue = newValue!;
+                        naturezaArquivo = newValue!;
                       });
                     },
                     items: <String>['Exame', 'Atestado', 'Comprovante']
@@ -149,8 +200,15 @@ class _ExamRegisterPageState extends State<ExamPage> {
                   ),
                   SizedBox(height: 15.0,),
                   OutlinedButton(
-                    onPressed: () => _selectFile(context),
+                    onPressed: () => startWebFilePicker(),
                     child: Text('Upload'),
+                  ),
+                  SizedBox(height: 5.0,),
+                  Text("${nomeArquivo}"),
+                  SizedBox(height: 40.0,),
+                  OutlinedButton(
+                    onPressed: () => _register(context),
+                    child: Text('Cadastrar'),
                   ),
                 ]
             )

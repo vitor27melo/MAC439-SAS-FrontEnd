@@ -4,6 +4,7 @@ import 'aboutGrade.dart' as aboutGrade;
 import 'examRegister.dart' as examRegister;
 import 'dart:convert';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'globals.dart' as globals;
 
 void main() {
   runApp(const MyApp());
@@ -74,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         user["token"] = user_json["token"];
         user["nome"] = user_json["nome"];
+        globals.token = user["token"];
         usuarioLogado = true;
       });
       final snackBar = SnackBar(
