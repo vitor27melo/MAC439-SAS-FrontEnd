@@ -79,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
         globals.cpf = user["cpf"];
         globals.token = user["token"];
         globals.usuarioLogado = true;
+        _calculateRisk();
       });
       final snackBar = SnackBar(
         content: Text('Bem vindo(a), ${user["nome"]}!'),
@@ -126,6 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+  }
+
+  void _calculateRisk() async {
+    user["nota_seguranca"] = 5;
   }
 
   void _onGoToAboutGradePage() {
@@ -185,6 +190,31 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ]
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                      user["nota_seguranca"].toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                        fontSize: 26
+                      ),
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child:
+                        Text(
+                          " /10",
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14
+                          ),
+                        )
+                  )
+                ]
               )
             ],
           )
@@ -236,7 +266,7 @@ class _MyHomePageState extends State<MyHomePage> {
         closeManually: false,
         children: [
           SpeedDialChild(
-              child: Icon(Icons.image),
+              child: Icon(Icons.picture_as_pdf_rounded),
               label: 'Atestado/Exame',
               backgroundColor: Colors.blue,
               onTap: (){
@@ -245,7 +275,30 @@ class _MyHomePageState extends State<MyHomePage> {
                   _onGoToExamRegister();
                 });
               }
+          ),
+          SpeedDialChild(
+              child: Icon(Icons.wash),
+              label: 'Observação/Reclamação',
+              backgroundColor: Colors.blue,
+              onTap: (){
+                setState(() {
+                  isDialOpen = ValueNotifier(false);
+                  _onGoToExamRegister();
+                });
+              }
+          ),
+          SpeedDialChild(
+              child: Icon(Icons.waving_hand),
+              label: 'Presença',
+              backgroundColor: Colors.blue,
+              onTap: (){
+                setState(() {
+                  isDialOpen = ValueNotifier(false);
+                  _onGoToExamRegister();
+                });
+              }
           )
+
         ],
       ) : null
     );
