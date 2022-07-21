@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _login() async {
-    var url = Uri.parse('http://localhost:1323/login');
+    var url = Uri.parse(globals.api + '/login');
     var response = await http.post(
         url,
         headers: {
@@ -75,6 +75,8 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         user["token"] = user_json["token"];
         user["nome"] = user_json["nome"];
+        user["cpf"] = user_json["cpf"];
+        globals.cpf = user["cpf"];
         globals.token = user["token"];
         globals.usuarioLogado = true;
       });
@@ -91,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _register() async {
-    var url = Uri.parse('http://localhost:1323/register');
+    var url = Uri.parse(globals.api + '/register');
     var response = await http.post(
         url,
         headers: {

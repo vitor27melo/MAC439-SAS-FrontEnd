@@ -36,7 +36,7 @@ class _ExamRegisterPageState extends State<ExamPage> {
   }
 
   Future<void> _register(BuildContext context) async {
-    var url = Uri.parse('http://localhost:1323/user/upload-file');
+    var url = Uri.parse(globals.api + '/user/upload-file');
     var request = http.MultipartRequest("POST", url);
 
     request.headers['Access-Control_Allow_Origin'] = '*';

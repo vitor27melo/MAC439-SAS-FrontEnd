@@ -24,26 +24,38 @@ class ExamListPage extends StatefulWidget {
 
 
 class _ExamListPageState extends State<ExamListPage> {
-  List<int>? _selectedFile;
-  Uint8List? _bytesData;
+  List<String> lista = [];
 
-  String naturezaArquivo = 'Exame';
-  String nomeArquivo = '';
-  DateTime selectedDate = DateTime.now();
-
-  final obsController = TextEditingController();
-
-
-  @override
-  void dispose() {
-    obsController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _loadDocuments(context));
   }
 
-  Future<void> _download(BuildContext context) async {
-    final file = File("teste.pdf");
+  Future<void> _loadDocuments(BuildContext context) async {
+    var url = Uri.parse(globals.api + '/user/files-list');
+    var response = await http.get(
+        url,
+        headers: {
+          "Accept": "application/json",
+          "Access-Control_Allow_Origin": "*",
+          "Authorization": "Bearer ${globals.token}"
+        },
+    );
 
-    var url = Uri.parse('http://localhost:1323/user/download-file');
+
+    List<dynamic> user_json = jsonDecode(response.body);
+
+    for (var i = 0; i < user_json.length; i++) {
+      if (user_json[i]['cpf'] == globals.cpf) {
+        lista.insert(0, user_json[i]["exame"]["anexo"]["conteudo"]);
+      }
+    }
+    setState((){});
+  }
+
+  Future<void> _download(BuildContext context, String filename) async {
+    var url = Uri.parse(globals.api + '/user/download-file/' + filename);
     var request = http.MultipartRequest("GET", url);
 
     request.headers['Access-Control_Allow_Origin'] = '*';
@@ -58,44 +70,11 @@ class _ExamListPageState extends State<ExamListPage> {
       final content = base64Encode(data);
       final anchor = webFile.AnchorElement(
           href: "data:application/octet-stream;charset=utf-16le;base64,$content")
-        ..setAttribute("download", "file.jpg")
+        ..setAttribute("download", filename)
         ..click();
-
-      // var dir = await getApplicationDocumentsDirectory();
-      // print(dir);
-
-      // final file = File('banana.jpg');
-      // file.writeAsBytes(data).asStream();
-      // print(data);
-      // var blob = webFile.Blob(data, 'image/jpeg', 'native');
-      // print(blob);
-      // var anchorElement = webFile.AnchorElement(
-      //   href: webFile.Url.createObjectUrlFromBlob(blob).toString(),
-      // )..setAttribute("download", "teste.jpg")..click();
-
-      // html.File file = await File('./image.pdf').create();
-      // file.writeAsBytesSync(data);
-
-      // print(data);
-      // var sysFile = File('file.pdf');
-      // sysFile.writeAsBytes(data);
-      //
-      // print(response);
-      // print(response.contentLength);
-      // print(response.stream);
-      // var file = File('teste.pdf');
-      // var sink = file.openWrite();
-      // await response.stream.pipe(sink);
-      // sink.close();
-
-
-      final snackBar = SnackBar(
-        content: Text('Documento cadastrado com sucesso!'),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       final snackBar = SnackBar(
-        content: Text('Houve um erro ao cadastrar o documento. Tente novamente!'),
+        content: Text('Houve um erro ao fazer o download. Tente novamente!'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
@@ -115,12 +94,21 @@ class _ExamListPageState extends State<ExamListPage> {
             width: 350.0,
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  OutlinedButton(
-                    onPressed: () => _download(context),
-                    child: Text('Download'),
-                  ),
-                ]
+                children: lista.map((String data) {
+                  return ElevatedButton(
+                    child: Text(data),
+                    onPressed: () {
+                      _download(context, data);
+                    },
+                  );
+                  // ElevatedButton(
+                  //   child: Text(data),
+                  //   onPressed: () {
+                  //     print(data);
+                  //   },
+                  // );
+                }).toList(),
+
             )
           ),
         )
