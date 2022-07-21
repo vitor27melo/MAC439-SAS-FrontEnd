@@ -113,7 +113,8 @@ class _ObservationListPageState extends State<ObservationListPage> {
         appBar: AppBar(
           title: const Text('Lista de observações/reclamações'),
         ),
-        body:
+        body:SingleChildScrollView(
+        child:
         Center(
           child: Container(
             padding: const EdgeInsets.all(9.0),
@@ -164,6 +165,7 @@ class _ObservationListPageState extends State<ObservationListPage> {
             )
           ),
         )
+      )
     );
   }
 }

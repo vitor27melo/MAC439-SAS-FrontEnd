@@ -118,7 +118,8 @@ class _ExamRegisterPageState extends State<ExamPage> {
         appBar: AppBar(
           title: const Text('Cadastro de exame/atestado'),
         ),
-        body:
+        body:SingleChildScrollView(
+        child:
         Center(
           child: Container(
             padding: const EdgeInsets.all(9.0),
@@ -221,6 +222,7 @@ class _ExamRegisterPageState extends State<ExamPage> {
             )
           ),
         )
+    )
     );
   }
 }

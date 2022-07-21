@@ -117,7 +117,8 @@ class _ObservationRegisterPageState extends State<ObservationRegisterPage> {
         appBar: AppBar(
           title: const Text('Cadastro de observação/reclamação'),
         ),
-        body:
+        body:SingleChildScrollView(
+        child:
         Center(
           child: Container(
             padding: const EdgeInsets.all(9.0),
@@ -199,6 +200,7 @@ class _ObservationRegisterPageState extends State<ObservationRegisterPage> {
             )
           ),
         )
+    )
     );
   }
 }

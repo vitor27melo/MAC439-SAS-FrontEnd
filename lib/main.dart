@@ -7,6 +7,8 @@ import 'dart:convert';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'globals.dart' as globals;
 import 'widgets/navDrawer.dart' as navDrawer;
+import '../courseSchedule.dart' as courseSchedule;
+
 
 void main() {
   runApp(const MyApp());
@@ -144,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onGoToExamRegister() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const examRegister.ExamPage()),
+      MaterialPageRoute(builder: (context) => const courseSchedule.CourseSchedulePage()),
     );
   }
 

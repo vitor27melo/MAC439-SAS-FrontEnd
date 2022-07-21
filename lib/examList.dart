@@ -105,57 +105,59 @@ class _ExamListPageState extends State<ExamListPage> {
         appBar: AppBar(
           title: const Text('Lista de exames/atestados'),
         ),
-        body:
-        Center(
-          child: Container(
-            padding: const EdgeInsets.all(9.0),
-            width: 350.0,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: index_list.map((int index) {
-                  return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Divider(
-                            color: Colors.black
-                        ),
-                        Text(
-                            _nomeArquivo(index),
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold
-                            ),
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                            "Status: em análise"
-                        ),const SizedBox(height: 15),
-                        Text(
-                            _naturezaArquivo(index)
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                            _dataArquivo(index)
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                            _obsArquivo(index)
-                        ),
-                        const SizedBox(height: 15),
-                        ElevatedButton(
-                          child: Text("Baixar"),
-                          onPressed: () {
-                            _download(context, index);
-                          },
-                        ),
-                        const SizedBox(height: 40),
-                      ]
-                  );
-                }).toList(),
+        body:SingleChildScrollView(
+          child:
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(9.0),
+              width: 350.0,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: index_list.map((int index) {
+                    return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Divider(
+                              color: Colors.black
+                          ),
+                          Text(
+                              _nomeArquivo(index),
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold
+                              ),
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                              "Status: em análise"
+                          ),const SizedBox(height: 15),
+                          Text(
+                              _naturezaArquivo(index)
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                              _dataArquivo(index)
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                              _obsArquivo(index)
+                          ),
+                          const SizedBox(height: 15),
+                          ElevatedButton(
+                            child: Text("Baixar"),
+                            onPressed: () {
+                              _download(context, index);
+                            },
+                          ),
+                          const SizedBox(height: 40),
+                        ]
+                    );
+                  }).toList(),
 
-            )
-          ),
-        )
+              )
+            ),
+          )
+      )
     );
   }
 }

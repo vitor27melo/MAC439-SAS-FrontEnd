@@ -46,14 +46,12 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
 
     print(response.statusCode);
     print(response.body);
-    // lista = jsonDecode(response.body);
-    //
-    // for (var i = 0; i < lista.length; i++) {
-    //   if (lista[i]['cpf'] == globals.cpf && lista[i]['documento']['natureza'] != 'Reclamação' && lista[i]['documento']['natureza'] != 'Observação') {
-    //     index_list.insert(0, i);
-    //   }
-    // }
-    // setState((){});
+    lista = jsonDecode(response.body);
+
+    for (var i = 0; i < lista.length; i++) {
+        index_list.insert(0, i);
+    }
+    setState((){});
   }
 
   Future<void> _download(BuildContext context, int index) async {
@@ -83,20 +81,18 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
     }
   }
 
-  String _nomeArquivo(index) {
-    return lista[index]["documento"]["anexo"]["conteudo"].split("-filebegin-")[1];
+  String _nomeDisciplina(index) {
+    return lista[index]["sigla"] + " - " + lista[index]["nome"];
   }
 
-  String _naturezaArquivo(index) {
-    return "Natureza: " + lista[index]["documento"]["natureza"];
+  String _horarioDisciplina(index) {
+    return lista[index]["inicio"] + "-" + lista[index]["fim"];
   }
 
-  String _dataArquivo(index) {
-    return "Data: " + lista[index]["data"].split(" ")[0];
-  }
-
-  String _obsArquivo(index) {
-    return "Obs: " + lista[index]["documento"]["obs"];
+  bool _disciplinaAgora(index) {
+    DateTime now = new DateTime.now();
+    print(now.weekday);
+    return false;
   }
 
   @override
@@ -105,11 +101,12 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
         appBar: AppBar(
           title: const Text('Grade Horária'),
         ),
-        body:
+        body:SingleChildScrollView(
+        child:
         Center(
           child: Container(
             padding: const EdgeInsets.all(9.0),
-            width: 350.0,
+            width: 400.0,
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: index_list.map((int index) {
@@ -120,35 +117,30 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
                             color: Colors.black
                         ),
                         Text(
-                            _nomeArquivo(index),
+                            _nomeDisciplina(index),
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold
                             ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 10),
                         Text(
-                            "Status: em análise"
-                        ),const SizedBox(height: 15),
-                        Text(
-                            _naturezaArquivo(index)
+                            _horarioDisciplina(index)
                         ),
                         const SizedBox(height: 15),
-                        Text(
-                            _dataArquivo(index)
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                            _obsArquivo(index)
-                        ),
-                        const SizedBox(height: 15),
-                        ElevatedButton(
-                          child: Text("Baixar"),
-                          onPressed: () {
-                            _download(context, index);
-                          },
-                        ),
-                        const SizedBox(height: 40),
+                        _disciplinaAgora(index) ?
+                          ElevatedButton(
+                            child: Text("Estou presente!"),
+                            onPressed: () {
+                              _download(context, index);
+                            },
+                          )
+                          :
+                          ElevatedButton(
+                            child: Text("Estou presente!"),
+                            onPressed: null,
+                          ),
+                        const SizedBox(height: 20),
                       ]
                   );
                 }).toList(),
@@ -156,6 +148,7 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
             )
           ),
         )
+    )
     );
   }
 }
