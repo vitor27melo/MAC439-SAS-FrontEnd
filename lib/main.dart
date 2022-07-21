@@ -274,13 +274,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                   )
                 ]
-              ),
-              TextButton(
-                child: Text('atualizar'),
-                onPressed: () {
-                  _calculateRisk();
-                },
-              ),
+              )
             ],
           )
               :
@@ -331,9 +325,20 @@ class _MyHomePageState extends State<MyHomePage> {
         closeManually: false,
         children: [
           SpeedDialChild(
+              child: Icon(Icons.update),
+              label: 'Recalcular nota de segurança',
+              backgroundColor: Colors.green,
+              onTap: (){
+                setState(() {
+                  isDialOpen = ValueNotifier(false);
+                  _calculateRisk();
+                });
+              }
+          ),
+          SpeedDialChild(
               child: Icon(Icons.picture_as_pdf_rounded),
               label: 'Atestado/Exame',
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
               onTap: (){
                 setState(() {
                   isDialOpen = ValueNotifier(false);
@@ -344,7 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SpeedDialChild(
               child: Icon(Icons.wash),
               label: 'Observação/Reclamação',
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
               onTap: (){
                 setState(() {
                   isDialOpen = ValueNotifier(false);
@@ -355,7 +360,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SpeedDialChild(
               child: Icon(Icons.waving_hand),
               label: 'Presença',
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
               onTap: (){
                 setState(() {
                   isDialOpen = ValueNotifier(false);
@@ -366,7 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SpeedDialChild(
               child: Icon(Icons.coronavirus),
               label: 'Estou com Covid!',
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
               onTap: (){
                 setState(() {
                   isDialOpen = ValueNotifier(false);
