@@ -47,9 +47,10 @@ class _ObservationListPageState extends State<ObservationListPage> {
     print(response.statusCode);
     print(response.body);
     lista = jsonDecode(response.body);
+    print(globals.cpf);
 
     for (var i = 0; i < lista.length; i++) {
-      if (lista[i]['cpf'] == globals.cpf && lista[i]['documento']['natureza'] == 'Reclamação' || lista[i]['documento']['natureza'] == 'Observação') {
+      if (lista[i]['cpf'] == globals.cpf && (lista[i]['documento']['natureza'] == 'Reclamação' || lista[i]['documento']['natureza'] == 'Observação')) {
         index_list.insert(0, i);
       }
     }

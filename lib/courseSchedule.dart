@@ -44,8 +44,6 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
         },
     );
 
-    print(response.statusCode);
-    print(response.body);
     lista = jsonDecode(response.body);
 
     for (var i = 0; i < lista.length; i++) {
@@ -54,32 +52,28 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
     setState((){});
   }
 
-  Future<void> _download(BuildContext context, int index) async {
-    var string = globals.api + '/user/download-file/${lista[index]["documento"]["anexo"]["conteudo"]}';
-    var url = Uri.parse(string);
-    var request = http.MultipartRequest("GET", url);
+  Future<void> _registrarPresenca(BuildContext context, index) async {
+    var url = Uri.parse(globals.api + '/user/register-presence');
+    var request = http.MultipartRequest("POST", url);
 
     request.headers['Access-Control_Allow_Origin'] = '*';
     request.headers['Authorization'] = "Bearer ${globals.token}";
 
+    request.fields['cpf'] = globals.cpf;
+    DateTime now = new DateTime.now();
+    request.fields["data"] = now.day.toString().padLeft(2, '0') + "/" + now.month.toString().padLeft(2, '0') + "/" + now.year.toString();
+    request.fields["sigla"] = lista[index]["sigla"];
 
     var response = await request.send();
-    if(response.statusCode == 200) {
-
-      Uint8List data = await response.stream.toBytes();
-
-      final content = base64Encode(data);
-      final anchor = webFile.AnchorElement(
-          href: "data:application/octet-stream;charset=utf-16le;base64,$content")
-        ..setAttribute("download", lista[index]["documento"]["anexo"]["conteudo"].split("-filebegin-")[1])
-        ..click();
-    } else {
+    if (response.statusCode == 200) {
       final snackBar = SnackBar(
-        content: Text('Houve um erro ao fazer o download. Tente novamente!'),
+        content: Text('Presença registrada!'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+
   }
+
 
   String _nomeDisciplina(index) {
     return lista[index]["sigla"] + " - " + lista[index]["nome"];
@@ -147,7 +141,7 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
                           ElevatedButton(
                             child: Text("Estou presente!"),
                             onPressed: () {
-                              _download(context, index);
+                              _registrarPresenca(context, index);
                             },
                           )
                           :

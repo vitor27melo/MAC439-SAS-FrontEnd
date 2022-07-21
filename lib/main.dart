@@ -114,14 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (response.statusCode == 200) {
       Navigator.of(context, rootNavigator: true).pop();
-      Map<String, dynamic> user_json = jsonDecode(response.body);
-      setState(() {
-        user["token"] = user_json["token"];
-        user["nome"] = user_json["nome"];
-        globals.usuarioLogado = true;
-      });
       final snackBar = SnackBar(
-        content: Text('Bem vindo(a), ${user["nome"]}!'),
+        content: Text('Usuario cadastrado! Faça login para entrar'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
@@ -134,14 +128,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _calculateRisk() async {
     user["nota_seguranca"] = '?';
-    var string = globals.api + '/user/risk';
+    var string = globals.api + '/user/risk/${globals.cpf}';
     var url = Uri.parse(string);
+
     var request = http.MultipartRequest("GET", url);
 
     request.headers['Access-Control_Allow_Origin'] = '*';
     request.headers['Authorization'] = "Bearer ${globals.token}";
-
-    request.fields["cpf"] = user["cpf"];
 
     var response = await request.send();
     if (response.statusCode == 200) {
@@ -173,6 +166,10 @@ class _MyHomePageState extends State<MyHomePage> {
     var response = await request.send();
     if (response.statusCode == 200) {
       _calculateRisk();
+      final snackBar = SnackBar(
+        content: Text("Espero que se recupere rapidamente. Tente ficar em casa!"),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       final snackBar = SnackBar(
         content: Text("Ops! Algo deu errado. Tente novamente!"),
@@ -189,6 +186,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onGoToExamRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const examRegister.ExamPage()),
+    );
+  }
+
+  void _onGoToCourseSchedule() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const courseSchedule.CourseSchedulePage()),
@@ -270,7 +274,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                   )
                 ]
-              )
+              ),
+              TextButton(
+                child: Text('atualizar'),
+                onPressed: () {
+                  _calculateRisk();
+                },
+              ),
             ],
           )
               :
@@ -349,7 +359,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: (){
                 setState(() {
                   isDialOpen = ValueNotifier(false);
-                  _onGoToExamRegister();
+                  _onGoToCourseSchedule();
                 });
               }
           ),
