@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../main.dart' as mainPage;
 import '../globals.dart' as globals;
 import '../examList.dart' as examList;
+import '../observationList.dart' as observationList;
+import '../courseSchedule.dart' as courseSchedule;
 
 
 class NavDrawer extends StatefulWidget {
@@ -27,13 +29,35 @@ class NavDrawerPage extends State<NavDrawer>{
                     image: AssetImage('assets/images/usp.png'))),
           ),
           ListTile(
-            leading: Icon(Icons.verified_user),
+            leading: Icon(Icons.line_weight),
+            title: Text('Grade Horária'),
+            onTap: () => {
+              Navigator.of(context).pop(),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const courseSchedule.CourseSchedulePage()),
+              )
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.line_weight),
             title: Text('Meus exames/certificados'),
             onTap: () => {
               Navigator.of(context).pop(),
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const examList.ExamListPage()),
+              )
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.line_weight_rounded),
+            title: Text('Minhas observações/reclamações'),
+            onTap: () => {
+              Navigator.of(context).pop(),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const observationList.ObservationListPage()),
               )
             },
           ),

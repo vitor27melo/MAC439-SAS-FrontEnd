@@ -23,9 +23,8 @@ class SecondRoute extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Image.asset(
-                              'assets/images/atila.jpg',
-                              color: Colors.white.withOpacity(0.08),
-                              colorBlendMode: BlendMode.modulate
+                              'assets/images/atila.png',
+                              width: 300,
                           ),
                         ]
 
@@ -40,24 +39,29 @@ class SecondRoute extends StatelessWidget {
                               "A sua nota de segurança representa o quão segura calculamos ser a sua visita presencial à universidade. Levamos em consideração, dentre outros, os seguintes fatores:",
                               style: TextStyle(
                                 fontSize: globals.defaultStringSize,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold
                               ),
                           ),
                           const SizedBox(height: 30),
                           Text("- A situação atual da pandemia no estado de São Paulo.",
                             style: TextStyle(
                               fontSize: globals.defaultStringSize - 1,
+                              color: Colors.green,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text("- As recomendações da Superintendência de Saúde da universidade.",
                             style: TextStyle(
                               fontSize: globals.defaultStringSize - 1,
+                              color: Colors.green,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text("- O possível contato que você teve com pessoas sintomáticas ou positivadas para a doença, assim como o intervalo temporal desse contato.",
                             style: TextStyle(
                               fontSize: globals.defaultStringSize - 1,
+                              color: Colors.green,
                             ),
                           ),
                         ]

@@ -15,15 +15,15 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:html' as webFile;
 
 
-class ExamListPage extends StatefulWidget {
-  const ExamListPage({Key? key}) : super(key: key);
+class ObservationListPage extends StatefulWidget {
+  const ObservationListPage({Key? key}) : super(key: key);
 
   @override
-  State<ExamListPage> createState() => _ExamListPageState();
+  State<ObservationListPage> createState() => _ObservationListPageState();
 }
 
 
-class _ExamListPageState extends State<ExamListPage> {
+class _ObservationListPageState extends State<ObservationListPage> {
   List<int> index_list = [];
   List<dynamic> lista = [];
 
@@ -49,7 +49,7 @@ class _ExamListPageState extends State<ExamListPage> {
     lista = jsonDecode(response.body);
 
     for (var i = 0; i < lista.length; i++) {
-      if (lista[i]['cpf'] == globals.cpf && lista[i]['documento']['natureza'] != 'Reclamação' && lista[i]['documento']['natureza'] != 'Observação') {
+      if (lista[i]['cpf'] == globals.cpf && lista[i]['documento']['natureza'] == 'Reclamação' || lista[i]['documento']['natureza'] == 'Observação') {
         index_list.insert(0, i);
       }
     }
@@ -84,7 +84,11 @@ class _ExamListPageState extends State<ExamListPage> {
   }
 
   String _nomeArquivo(index) {
-    return lista[index]["documento"]["anexo"]["conteudo"].split("-filebegin-")[1];
+    if (lista[index]["documento"]["anexo"]["tipo"] != "") {
+      return lista[index]["documento"]["anexo"]["conteudo"].split("-filebegin-")[1];
+    } else {
+      return "";
+    }
   }
 
   String _naturezaArquivo(index) {
@@ -96,14 +100,18 @@ class _ExamListPageState extends State<ExamListPage> {
   }
 
   String _obsArquivo(index) {
-    return "Obs: " + lista[index]["documento"]["obs"];
+    return "Descrição: " + lista[index]["documento"]["obs"];
+  }
+
+  bool _possuiArquivo(index) {
+    return lista[index]["documento"]["anexo"]["tipo"] != "";
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Lista de exames/atestados'),
+          title: const Text('Lista de observações/reclamações'),
         ),
         body:
         Center(
@@ -142,12 +150,12 @@ class _ExamListPageState extends State<ExamListPage> {
                             _obsArquivo(index)
                         ),
                         const SizedBox(height: 15),
-                        ElevatedButton(
+                        _possuiArquivo(index) ? ElevatedButton(
                           child: Text("Baixar"),
                           onPressed: () {
                             _download(context, index);
                           },
-                        ),
+                        ) : Text(""),
                         const SizedBox(height: 40),
                       ]
                   );

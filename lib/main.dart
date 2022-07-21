@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'aboutGrade.dart' as aboutGrade;
 import 'examRegister.dart' as examRegister;
+import 'observationRegister.dart' as observationRegister;
 import 'dart:convert';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'globals.dart' as globals;
@@ -147,6 +148,13 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _onGoToObservationRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const observationRegister.ObservationRegisterPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       .headline6
               ),
               const SizedBox(height: 25),
-              Image.asset('assets/images/coronavirus.webp', width: 100),
+              Image.asset('assets/images/coronavirus.png', width: 100),
               const SizedBox(height: 25),
 
               Row(
@@ -283,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: (){
                 setState(() {
                   isDialOpen = ValueNotifier(false);
-                  _onGoToExamRegister();
+                  _onGoToObservationRegister();
                 });
               }
           ),

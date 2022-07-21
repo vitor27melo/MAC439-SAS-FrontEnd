@@ -5,4 +5,4 @@ String api = "https://sas-mac439.herokuapp.com";
 String token = '';
 bool usuarioLogado = false;
 String cpf = '';
-double defaultStringSize = 16;
+double defaultStringSize = 17;

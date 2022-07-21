@@ -15,15 +15,15 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:html' as webFile;
 
 
-class ExamListPage extends StatefulWidget {
-  const ExamListPage({Key? key}) : super(key: key);
+class CourseSchedulePage extends StatefulWidget {
+  const CourseSchedulePage({Key? key}) : super(key: key);
 
   @override
-  State<ExamListPage> createState() => _ExamListPageState();
+  State<CourseSchedulePage> createState() => _CourseSchedulePageState();
 }
 
 
-class _ExamListPageState extends State<ExamListPage> {
+class _CourseSchedulePageState extends State<CourseSchedulePage> {
   List<int> index_list = [];
   List<dynamic> lista = [];
 
@@ -34,7 +34,7 @@ class _ExamListPageState extends State<ExamListPage> {
   }
 
   Future<void> _loadDocuments(BuildContext context) async {
-    var url = Uri.parse(globals.api + '/user/files-list');
+    var url = Uri.parse(globals.api + '/user/course-schedule');
     var response = await http.get(
         url,
         headers: {
@@ -46,14 +46,14 @@ class _ExamListPageState extends State<ExamListPage> {
 
     print(response.statusCode);
     print(response.body);
-    lista = jsonDecode(response.body);
-
-    for (var i = 0; i < lista.length; i++) {
-      if (lista[i]['cpf'] == globals.cpf && lista[i]['documento']['natureza'] != 'Reclamação' && lista[i]['documento']['natureza'] != 'Observação') {
-        index_list.insert(0, i);
-      }
-    }
-    setState((){});
+    // lista = jsonDecode(response.body);
+    //
+    // for (var i = 0; i < lista.length; i++) {
+    //   if (lista[i]['cpf'] == globals.cpf && lista[i]['documento']['natureza'] != 'Reclamação' && lista[i]['documento']['natureza'] != 'Observação') {
+    //     index_list.insert(0, i);
+    //   }
+    // }
+    // setState((){});
   }
 
   Future<void> _download(BuildContext context, int index) async {
@@ -103,7 +103,7 @@ class _ExamListPageState extends State<ExamListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Lista de exames/atestados'),
+          title: const Text('Grade Horária'),
         ),
         body:
         Center(

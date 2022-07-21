@@ -10,19 +10,19 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http_parser/http_parser.dart';
 
-class ExamPage extends StatefulWidget {
-  const ExamPage({Key? key}) : super(key: key);
+class ObservationRegisterPage extends StatefulWidget {
+  const ObservationRegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<ExamPage> createState() => _ExamRegisterPageState();
+  State<ObservationRegisterPage> createState() => _ObservationRegisterPageState();
 }
 
 
-class _ExamRegisterPageState extends State<ExamPage> {
+class _ObservationRegisterPageState extends State<ObservationRegisterPage> {
   List<int>? _selectedFile;
   Uint8List? _bytesData;
+  bool queroFeedback = false;
 
-  String naturezaArquivo = 'Exame';
   String nomeArquivo = '';
   DateTime selectedDate = DateTime.now();
 
@@ -36,37 +36,36 @@ class _ExamRegisterPageState extends State<ExamPage> {
   }
 
   Future<void> _register(BuildContext context) async {
-    if (_selectedFile == null) {
-      final snackBar = SnackBar(
-        content: Text('É necessário anexar um documento!'),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      return;
-    }
     var url = Uri.parse(globals.api + '/user/upload-file');
     var request = http.MultipartRequest("POST", url);
 
     request.headers['Access-Control_Allow_Origin'] = '*';
     request.headers['Authorization'] = "Bearer ${globals.token}";
 
-    request.fields['attachmentType'] = naturezaArquivo;
+    if (queroFeedback) {
+      request.fields['attachmentType'] = 'Reclamação';
+    } else {
+      request.fields['attachmentType'] = 'Observação';
+    }
     request.fields['date'] = selectedDate.toString();
     request.fields['obs'] = obsController.text;
-    request.files.add(await http.MultipartFile.fromBytes('file', _selectedFile!,
-        contentType: new MediaType('application', 'octet-stream'),
-        filename: nomeArquivo)
-    );
+    if (_selectedFile != null) {
+      request.files.add(await http.MultipartFile.fromBytes('file', _selectedFile!,
+          contentType: new MediaType('application', 'octet-stream'),
+          filename: nomeArquivo)
+      );
+    }
 
     request.send().then((response) {
       if (response.statusCode == 200) {
         Navigator.of(context, rootNavigator: true).pop();
         final snackBar = SnackBar(
-          content: Text('Documento cadastrado com sucesso!'),
+          content: Text('Observação/Reclamação registrada com sucesso!'),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
         final snackBar = SnackBar(
-          content: Text('Houve um erro ao cadastrar o documento. Tente novamente!'),
+          content: Text('Houve um erro ao registar a observação/reclamação. Tente novamente!'),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
@@ -116,7 +115,7 @@ class _ExamRegisterPageState extends State<ExamPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Cadastro de exame/atestado'),
+          title: const Text('Cadastro de observação/reclamação'),
         ),
         body:
         Center(
@@ -129,39 +128,7 @@ class _ExamRegisterPageState extends State<ExamPage> {
                   const Padding(
                     padding: EdgeInsets.only(right: 0.0),
                     child: Text(
-                      "Natureza",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green
-                      ),
-                    ),
-                  ),
-                  DropdownButton<String>(
-                    value: naturezaArquivo,
-                    icon: const Icon(Icons.arrow_downward),
-                    elevation: 16,
-                    underline: Container(
-                      height: 2,
-                    ),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        naturezaArquivo = newValue!;
-                      });
-                    },
-                    items: <String>['Exame', 'Atestado', 'Comprovante']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 50.0,),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 0.0),
-                    child: Text(
-                      "Data do documento",
+                      "Data da ocorrência",
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -180,7 +147,7 @@ class _ExamRegisterPageState extends State<ExamPage> {
                   const Padding(
                     padding: EdgeInsets.only(right: 0.0),
                     child: Text(
-                      "Observações",
+                      "Descrição",
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -192,6 +159,17 @@ class _ExamRegisterPageState extends State<ExamPage> {
                   TextField(
                     controller: obsController,
                     maxLines: 5
+                  ),
+                  SizedBox(height: 50.0,),
+                  CheckboxListTile(
+                    title: Text("Quero receber feedback"),
+                    value: queroFeedback,
+                    onChanged: (newValue) {
+                      setState(() {
+                        queroFeedback = newValue!;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
                   ),
                   SizedBox(height: 50.0,),
                   const Padding(
