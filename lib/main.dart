@@ -5,6 +5,7 @@ import 'examRegister.dart' as examRegister;
 import 'dart:convert';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'globals.dart' as globals;
+import 'widgets/navDrawer.dart' as navDrawer;
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'SAS - USP'),
+      home: const MyHomePage(title: 'Sistema de acompanhamento sintomático - USP'),
     );
   }
 }
@@ -37,7 +38,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool formVisible = false;
   var user = {};
-  var usuarioLogado = false;
   ValueNotifier<bool> isDialOpen = ValueNotifier(true);
 
   final nameController = TextEditingController();
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
         user["token"] = user_json["token"];
         user["nome"] = user_json["nome"];
         globals.token = user["token"];
-        usuarioLogado = true;
+        globals.usuarioLogado = true;
       });
       final snackBar = SnackBar(
         content: Text('Bem vindo(a), ${user["nome"]}!'),
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         user["token"] = user_json["token"];
         user["nome"] = user_json["nome"];
-        usuarioLogado = true;
+        globals.usuarioLogado = true;
       });
       final snackBar = SnackBar(
         content: Text('Bem vindo(a), ${user["nome"]}!'),
@@ -143,12 +143,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: globals.usuarioLogado ? navDrawer.NavDrawer() : null,
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: Center(
           child:
-          usuarioLogado ?
+          globals.usuarioLogado ?
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -160,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       .headline6
               ),
               const SizedBox(height: 25),
-              Image.network('https://cdn.pixabay.com/photo/2020/04/29/07/54/coronavirus-5107715_1280.png', width: 100),
+              Image.asset('assets/images/coronavirus.webp', width: 100),
               const SizedBox(height: 25),
 
               Row(
@@ -222,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ]
           )
       ),
-      floatingActionButton: usuarioLogado ? SpeedDial(
+      floatingActionButton: globals.usuarioLogado ? SpeedDial(
         animatedIcon: AnimatedIcons.add_event,
         openCloseDial: isDialOpen,
         backgroundColor: Colors.redAccent,

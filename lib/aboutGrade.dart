@@ -20,8 +20,8 @@ class SecondRoute extends StatelessWidget {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Image.network(
-                              'https://pbs.twimg.com/media/EeXF2MOXsAALfd5.jpg',
+                          Image.asset(
+                              'assets/images/atila.jpg',
                               color: Colors.white.withOpacity(0.08),
                               colorBlendMode: BlendMode.modulate
                           ),
