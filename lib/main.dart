@@ -167,6 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
     request.headers['Authorization'] = "Bearer ${globals.token}";
 
     request.fields["cpf"] = user["cpf"];
+    DateTime now = new DateTime.now();
+    request.fields["data"] = now.day.toString().padLeft(2, '0') + "/" + now.month.toString().padLeft(2, '0') + "/" + now.year.toString();
 
     var response = await request.send();
     if (response.statusCode == 200) {
