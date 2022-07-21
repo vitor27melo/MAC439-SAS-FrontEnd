@@ -86,12 +86,27 @@ class _CourseSchedulePageState extends State<CourseSchedulePage> {
   }
 
   String _horarioDisciplina(index) {
-    return lista[index]["inicio"] + "-" + lista[index]["fim"];
+    return lista[index]["dia_semana"] + " " + lista[index]["inicio"] + "-" + lista[index]["fim"];
   }
 
   bool _disciplinaAgora(index) {
+    var map = {
+      "SEG": 1,
+      "TER": 2,
+      "QUA": 3,
+      "QUI": 4,
+      "SEX": 5,
+      "SAB": 6,
+      "DOM": 7,
+    };
     DateTime now = new DateTime.now();
-    print(now.weekday);
+
+    var inicio = int.parse(lista[index]["inicio"].split(":")[0]);
+    var fim = int.parse(lista[index]["fim"].split(":")[0]);
+
+    if (now.weekday == map[lista[index]["dia_semana"]] && now.hour > inicio - 1 && now.hour < fim + 1 ){
+      return true;
+    }
     return false;
   }
 

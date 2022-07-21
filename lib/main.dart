@@ -8,7 +8,8 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'globals.dart' as globals;
 import 'widgets/navDrawer.dart' as navDrawer;
 import '../courseSchedule.dart' as courseSchedule;
-
+import 'dart:convert' show utf8;
+import 'dart:typed_data';
 
 void main() {
   runApp(const MyApp());
@@ -47,7 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final cpfController = TextEditingController();
-
 
   @override
   void dispose() {
@@ -133,7 +133,50 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _calculateRisk() async {
-    user["nota_seguranca"] = 5;
+    user["nota_seguranca"] = '?';
+    var string = globals.api + '/user/risk';
+    var url = Uri.parse(string);
+    var request = http.MultipartRequest("GET", url);
+
+    request.headers['Access-Control_Allow_Origin'] = '*';
+    request.headers['Authorization'] = "Bearer ${globals.token}";
+
+    request.fields["cpf"] = user["cpf"];
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      Uint8List data = await response.stream.toBytes();
+      var nota = 10 - int.parse(String.fromCharCodes(data));
+      print(int.parse(String.fromCharCodes(data)));
+      if (nota < 0) {
+        nota = 0;
+      }
+      user["nota_seguranca"] = nota;
+    } else {
+      user["nota_seguranca"] = 10;
+    }
+    setState((){});
+  }
+
+  void _onRegisterCovid() async {
+    var string = globals.api + '/user/report-covid';
+    var url = Uri.parse(string);
+    var request = http.MultipartRequest("POST", url);
+
+    request.headers['Access-Control_Allow_Origin'] = '*';
+    request.headers['Authorization'] = "Bearer ${globals.token}";
+
+    request.fields["cpf"] = user["cpf"];
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      _calculateRisk();
+    } else {
+      final snackBar = SnackBar(
+        content: Text("Ops! Algo deu errado. Tente novamente!"),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   void _onGoToAboutGradePage() {
@@ -307,8 +350,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   _onGoToExamRegister();
                 });
               }
+          ),
+          SpeedDialChild(
+              child: Icon(Icons.coronavirus),
+              label: 'Estou com Covid!',
+              backgroundColor: Colors.blue,
+              onTap: (){
+                setState(() {
+                  isDialOpen = ValueNotifier(false);
+                  _onRegisterCovid();
+                });
+              }
           )
-
         ],
       ) : null
     );
