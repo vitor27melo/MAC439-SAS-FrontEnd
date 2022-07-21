@@ -24,7 +24,8 @@ class ExamListPage extends StatefulWidget {
 
 
 class _ExamListPageState extends State<ExamListPage> {
-  List<String> lista = [];
+  List<int> index_list = [];
+  List<dynamic> lista = [];
 
   void initState() {
     super.initState();
@@ -43,19 +44,21 @@ class _ExamListPageState extends State<ExamListPage> {
         },
     );
 
+    print(response.statusCode);
+    print(response.body);
+    lista = jsonDecode(response.body);
 
-    List<dynamic> user_json = jsonDecode(response.body);
-
-    for (var i = 0; i < user_json.length; i++) {
-      if (user_json[i]['cpf'] == globals.cpf) {
-        lista.insert(0, user_json[i]["exame"]["anexo"]["conteudo"]);
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i]['cpf'] == globals.cpf) {
+        index_list.insert(0, i);
       }
     }
     setState((){});
   }
 
-  Future<void> _download(BuildContext context, String filename) async {
-    var url = Uri.parse(globals.api + '/user/download-file/' + filename);
+  Future<void> _download(BuildContext context, int index) async {
+    var string = globals.api + '/user/download-file/${lista[index]["documento"]["anexo"]["conteudo"]}';
+    var url = Uri.parse(string);
     var request = http.MultipartRequest("GET", url);
 
     request.headers['Access-Control_Allow_Origin'] = '*';
@@ -70,7 +73,7 @@ class _ExamListPageState extends State<ExamListPage> {
       final content = base64Encode(data);
       final anchor = webFile.AnchorElement(
           href: "data:application/octet-stream;charset=utf-16le;base64,$content")
-        ..setAttribute("download", filename)
+        ..setAttribute("download", lista[index]["documento"]["anexo"]["conteudo"].split("-filebegin-")[1])
         ..click();
     } else {
       final snackBar = SnackBar(
@@ -78,7 +81,22 @@ class _ExamListPageState extends State<ExamListPage> {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+  }
 
+  String _nomeArquivo(index) {
+    return lista[index]["documento"]["anexo"]["conteudo"].split("-filebegin-")[1];
+  }
+
+  String _naturezaArquivo(index) {
+    return "Natureza: " + lista[index]["documento"]["natureza"];
+  }
+
+  String _dataArquivo(index) {
+    return "Data: " + lista[index]["data"].split(" ")[0];
+  }
+
+  String _obsArquivo(index) {
+    return "Obs: " + lista[index]["documento"]["obs"];
   }
 
   @override
@@ -94,19 +112,45 @@ class _ExamListPageState extends State<ExamListPage> {
             width: 350.0,
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: lista.map((String data) {
-                  return ElevatedButton(
-                    child: Text(data),
-                    onPressed: () {
-                      _download(context, data);
-                    },
+                children: index_list.map((int index) {
+                  return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Divider(
+                            color: Colors.black
+                        ),
+                        Text(
+                            _nomeArquivo(index),
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold
+                            ),
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                            "Status: em análise"
+                        ),const SizedBox(height: 15),
+                        Text(
+                            _naturezaArquivo(index)
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                            _dataArquivo(index)
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                            _obsArquivo(index)
+                        ),
+                        const SizedBox(height: 15),
+                        ElevatedButton(
+                          child: Text("Baixar"),
+                          onPressed: () {
+                            _download(context, index);
+                          },
+                        ),
+                        const SizedBox(height: 40),
+                      ]
                   );
-                  // ElevatedButton(
-                  //   child: Text(data),
-                  //   onPressed: () {
-                  //     print(data);
-                  //   },
-                  // );
                 }).toList(),
 
             )
